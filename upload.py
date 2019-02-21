@@ -1,8 +1,9 @@
 import sys
 from config import *
+import pandas as pd
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTableWidget,QTableWidgetItem, QTabWidget, \
-                            QPushButton, QHBoxLayout
+                            QPushButton, QHBoxLayout, QRadioButton, QLabel
 
 class Uploadpage(QWidget):
     def __init__(self):
@@ -14,15 +15,36 @@ class Uploadpage(QWidget):
         self.height = window_height
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
+        self.dataframes = [table.model()._data for _, table in self.tableWidget]
     
     def upload_gui(self):
         self.layout = QVBoxLayout()
         horizontal_layout1 = QHBoxLayout()
 
+        self.radio_keys = list()
         #Create tab of files
         self.tab = QTabWidget()
         for fname, table_widget in self.tableWidget:
-            self.tab.addTab(table_widget,fname)
+            headers = table_widget.model()._data.columns.values
+            radio_buttons = list()
+            for key in headers:
+                radio_buttons.append(QRadioButton(key))
+            self.radio_keys.append(radio_buttons)
+            horizontal_layoutradio = QHBoxLayout()
+            horizontal_layoutradio.addWidget(QLabel('Choose Key'))
+            for radio_button in radio_buttons:
+                horizontal_layoutradio.addWidget(radio_button)
+            else:
+                radio_button.setChecked(True)
+            
+            horizontal_layoutradio.addStretch(1)
+            
+            vertical_layout = QVBoxLayout()
+            vertical_layout.addWidget(table_widget)
+            vertical_layout.addLayout(horizontal_layoutradio)
+            tab_wid = QWidget()
+            tab_wid.setLayout(vertical_layout)
+            self.tab.addTab(tab_wid,fname)
 
         #Create buttons'Back' and 'OK'
         self.button_OK = QPushButton('OK')
@@ -37,7 +59,7 @@ class Uploadpage(QWidget):
 
         #add lister to the buttons
         self.button_back.clicked.connect(self.back_clicked)
-        #button_OK.clicked.connect(self.ok_clicked)
+        self.button_OK.clicked.connect(self.ok_clicked)
     
     @pyqtSlot()
     def back_clicked(self):

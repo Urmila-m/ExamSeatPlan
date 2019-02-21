@@ -35,17 +35,17 @@ class Homepage(QWidget):
         title.setFont(QFont("Helvetica", 20, QFont.Bold))
         
         #show edit image
-        edit_img = QPixmap('Res/edit.png').scaledToHeight(200).scaledToWidth(200)
+        edit_img = QPixmap('Res/edit.png').scaled(200, 200, transformMode=Qt.SmoothTransformation)
         label_edit = QLabel(self)
         label_edit.setPixmap(edit_img)
         self.button_edit = QPushButton('Edit Room Profile')
         #show upload image
-        upload_img = QPixmap('Res/upload.png').scaledToHeight(200).scaledToWidth(200)
+        upload_img = QPixmap('Res/upload.png').scaled(200, 200, transformMode=Qt.SmoothTransformation)
         label_upload = QLabel(self)
         label_upload.setPixmap(upload_img)
         self.button_upload = QPushButton('Upload')
         #show search image
-        search_img = QPixmap('Res/search.png').scaledToHeight(200).scaledToWidth(200)
+        search_img = QPixmap('Res/search.png').scaled(200, 200, transformMode=Qt.SmoothTransformation)
         label_search = QLabel(self)
         label_search.setPixmap(search_img)
         self.button_search = QPushButton('Search')
