@@ -11,6 +11,7 @@ numpy = "*"
 pandas = "*"
 xlrd = "*"
 openpyxl = "*"
+python-docx = "*"
 
 [requires]
 python_version = "3.7"

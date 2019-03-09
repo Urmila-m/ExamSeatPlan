@@ -99,13 +99,13 @@ class Examdetails(QWidget):
         # Time widget
         text_from = QLabel('Exam From:')
         text_to = QLabel('Exam To:')
-        time_from = QTimeEdit(QTime.currentTime())
-        time_to = QTimeEdit(QTime.currentTime())
+        self.time_from = QTimeEdit(QTime.currentTime())
+        self.time_to = QTimeEdit(QTime.currentTime())
         horizontal_layouttime = QHBoxLayout()
         horizontal_layouttime.addWidget(text_from)
-        horizontal_layouttime.addWidget(time_from)
+        horizontal_layouttime.addWidget(self.time_from)
         horizontal_layouttime.addWidget(text_to)
-        horizontal_layouttime.addWidget(time_to)
+        horizontal_layouttime.addWidget(self.time_to)
     
         #Calender and time
 

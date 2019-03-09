@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import math
+import docx
 
 def partition(size,num_partion):
     step = size/num_partion
@@ -111,19 +112,39 @@ def plan_examhall(dataframe, row, column):
     dataframe = dataframe.set_index(['Column','Row'])
     return pd.pivot_table(dataframe, values='Key', index=['Row'],
                     columns=['Column'], aggfunc=lambda x: ' '.join(x))
+
+def result_2docx(df, examination_name ,examhall, date, time, location):
+
+    doc = docx.Document()
+    exam_name = doc.add_paragraph()
+    exam_name.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
+    exam_name.add_run(examination_name).bold = True
+
+    date_para = doc.add_paragraph()
+    date_para.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.RIGHT
+    date_para.add_run(date)
+
+    exam_hall_para = doc.add_paragraph()
+    exam_hall_para.add_run('Examination Hall:- ')
+    exam_hall_para.add_run(examhall)
+
+    time_para = doc.add_paragraph()
+    time_para.add_run('Time:- ')
+    time_para.add_run(time)
+    # add a table to the end and create a reference variable
+    # extra row is so we can add the header row
+    t = doc.add_table(df.shape[0]+1, df.shape[1])
+
+    # add the header rows.
+    for j in range(df.shape[1]):
+        t.cell(0,j).text = str(df.columns[j])
+        
+
+    # add the rest of the data frame
+    for i in range(df.shape[0]):
+        for j in range(df.shape[1]):
+            t.cell(i+1,j).text = str(df.values[i,j])
+
+    # save the doc
+    doc.save(location)
     
-
-if __name__ == '__main__':
-    filenames = ['bctA.xlsx', 'bctB.xlsx']
-    dataframes = list()
-    for fname in filenames:
-        df = pd.read_excel(fname)[['Mobile Phone']]
-        df.columns = ['Key']
-        dataframes.append(df)
-    
-
-    dataframes = equalise(dataframes, 52)
-    ans_dataframes = arrange_seat(dataframes)
-    print(ans_dataframes)
-    print(plan_examhall(ans_dataframes, 13, 4).reset_index().drop('Column',1))
-

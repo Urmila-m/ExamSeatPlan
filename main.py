@@ -9,7 +9,7 @@ from helperclass import PandasModel
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTableView, QFileDialog, QHeaderView, QInputDialog
 from PyQt5.QtCore import QObject, pyqtSlot
-from helperfunction import equalise, arrange_seat, plan_examhall, Grid2List
+from helperfunction import equalise, arrange_seat, plan_examhall, Grid2List, result_2docx
 
 
 class HomePage(Homepage):
@@ -150,8 +150,10 @@ class ResultPage(Resultpage):
 
     switch_examdetail = QtCore.pyqtSignal()
 
-    def __init__(self, df_result, name_exam):
+    def __init__(self, df_result, name_exam, exam_date, time_from, time_to):
         self.name_exam = name_exam
+        self.exam_date = exam_date
+        self.time = time_from + ' - ' + time_to
         self.df_result = df_result
         Resultpage.__init__(self, self.df_result)
         self.resultpage_gui()
@@ -159,6 +161,14 @@ class ResultPage(Resultpage):
     @pyqtSlot()
     def back_clicked(self):
         self.switch_examdetail.emit()
+
+    @pyqtSlot()
+    def save_local(self):
+        directory = QFileDialog.getExistingDirectory()
+        for fname, result in self.result_df:
+            filename = directory+'/'+fname + '.docx'
+            result_2docx(df = result, examination_name = self.name_exam, examhall = fname,
+                        date = self.exam_date, time = self.time, location = filename)
     
     # @pyqtSlot()
     # def save_db(self):
@@ -171,7 +181,6 @@ class Controller:
     def __init__(self):
         self.homepage = HomePage()
         self.editprofilepage = EditProfilePage()
-        pass
 
     def show_homepage(self):
         self.homepage.switch_upload.connect(self.show_uploadpage)
@@ -203,7 +212,9 @@ class Controller:
         self.examdetail.show()
 
     def show_resultpage(self):
-        self.resultpage = ResultPage(self.examdetail.planned, self.examdetail.name_exam)
+        self.resultpage = ResultPage(self.examdetail.planned, self.examdetail.exam_name.text(), 
+                                    self.examdetail.label_date.text(),
+                                    self.examdetail.time_from.text(), self.examdetail.time_to.text())
         self.resultpage.switch_examdetail.connect(self.show_examdetail)
         self.examdetail.close()
         self.resultpage.show()
