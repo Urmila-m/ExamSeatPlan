@@ -35,11 +35,13 @@ class Resultpage(QWidget):
 
         #Buttons
         self.button_back = QPushButton('Back')
-        self.button_save = QPushButton('Save')
+        self.button_savelocal = QPushButton('Save Local')
+        #self.button_savedb = QPushButton('Save Database')
 
         #Gui
         horizontal_layout.addWidget(self.button_back)
-        horizontal_layout.addWidget(self.button_save)
+        horizontal_layout.addWidget(self.button_savelocal)
+        #horizontal_layout.addWidget(self.button_savedb)
 
         vertical_layout.addWidget(tab)
         vertical_layout.addLayout(horizontal_layout)
@@ -47,12 +49,17 @@ class Resultpage(QWidget):
         self.setLayout(self.layout)
 
         #listner for buttons
-        self.button_save.clicked.connect(self.save_result)
+        self.button_savelocal.clicked.connect(self.save_local)
+        #self.button_savedb.clicked.connect(self.save_db)
         self.button_back.clicked.connect(self.back_clicked)
 
     @pyqtSlot()
-    def save_result(self):
-        print('you pressed Saved')
+    def save_local(self):
+        print('you pressed Saved local')
+
+    # @pyqtSlot()
+    # def save_db(self):
+    #     print('you pressed Saved database')
 
     @pyqtSlot()
     def back_clicked(self):

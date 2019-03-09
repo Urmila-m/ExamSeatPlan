@@ -113,18 +113,19 @@ class Examdetails(QWidget):
         vertical_layoutcalendertime.addLayout(vertical_layoutcalender)
         vertical_layoutcalendertime.addLayout(horizontal_layouttime)
 
-        # radio button for seat plan
+        # radio button for output format
+        self.radio_grid = QRadioButton('Grid')
         self.radio_linear = QRadioButton('Linear')
-        self.radio_fill = QRadioButton('Fill')
-        self.radio_fill.setChecked(True)
+        self.radio_linear.setChecked(True)
         horizontal_layoutradio = QHBoxLayout()
-        text_choose_style = QLabel('Choose Seat Style')
-        text_choose_style.setFont(QFont("Arial", 15, QFont.Bold))
-        horizontal_layoutradio.addWidget(text_choose_style)
+        text_choose_format = QLabel('Choose Output Format')
+        text_choose_format.setFont(QFont("Arial", 15, QFont.Bold))
+        horizontal_layoutradio.addWidget(text_choose_format)
+        horizontal_layoutradio.addWidget(self.radio_grid)
         horizontal_layoutradio.addWidget(self.radio_linear)
-        horizontal_layoutradio.addWidget(self.radio_fill)
         horizontal_layoutradio.addStretch(1)
-        
+    
+
         vertical_layout.addLayout(horizontal_layouttext)
         horizontal_layoutcheckbox.addLayout(vertical_layoutcalendertime)
         vertical_layout.addLayout(horizontal_layoutcheckbox)
@@ -170,7 +171,7 @@ class Examdetails(QWidget):
         
         color = 'red'
         self.button_generate.setEnabled(False)
-        if self.num_seat > self.num_student:
+        if self.num_seat >= self.num_student:
             color = 'green'
             self.button_generate.setEnabled(True)
 

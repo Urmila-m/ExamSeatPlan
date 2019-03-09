@@ -43,7 +43,7 @@ class PandasModel(QtCore.QAbstractTableModel):
 
     def add_row(self):
         index = len(self._data.values)
-        default = ['New room', 5, 5]
+        default = ['New room', 5, 5, 25]
         self._data.loc[index] = default
         #Reseting model(bad implementation better use datachanged.emit later)
         self.beginResetModel()

@@ -12,6 +12,49 @@ def partition(size,num_partion):
 
     return result
 
+# def save_todb(exam_name, result_df):
+#     import sqlalchemy as db
+#     from config import database_ip, database_password, database_username
+#     from sqlalchemy_utils import database_exists, create_database
+#     database_name = exam_name
+#     database_engine = db.create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.
+#                                                 format(database_username, database_password, 
+#                                                         database_ip, database_name))
+#     if not database_exists(database_engine.url):
+#         create_database(database_engine.url)
+    
+#     for fname, planed_hall in result_df:
+#         planed_hall.to_sql(con=database_engine, name=fname, if_exists='replace', index = False)
+
+def Grid2List(table):
+    table_iter = table.iteritems()
+    lst = []
+    next(table_iter)
+    for column, row in table_iter:
+        for row_index, rowdata in enumerate(row):
+            if rowdata != 'nan':
+                Seat = 'C' + str(column) + 'R' + str(row_index+1)
+                lst.append([rowdata, Seat])
+    
+    list_table = pd.DataFrame(lst, columns = ['Name', 'Seat'])
+    list_table.dropna(inplace=True)
+    return list_table
+
+# def get_exams():
+#     import sqlalchemy as db
+#     from config import database_ip, database_password, database_username
+
+
+#     database_engine = db.create_engine('mysql+mysqlconnector://{0}:{1}@{2}'.
+#                                                 format(database_username, database_password, 
+#                                                         database_ip))
+    
+#     for exam_name in database_engine.execute('show databases').fetchall():
+#         yield exam_name[0]      
+
+
+  
+
 def equalise(dataframes, totalseat):
     # Merges dataframes so that all student occupy all the seats
     num_exam = len(dataframes)
@@ -27,7 +70,7 @@ def equalise(dataframes, totalseat):
     else:
         group_size = math.ceil(totalseat/num_exam) #up ceil
 
-    total_dataframes = pd.DataFrame(np.array(['empty']* (group_size *num_exam)), columns = ['Key']) # initializing
+    total_dataframes = pd.DataFrame(np.array(["nan"]* (group_size *num_exam)), columns = ['Key']) # initializing
 
     # make it more readable
     a = 0

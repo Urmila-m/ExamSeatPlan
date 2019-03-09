@@ -7,9 +7,9 @@ from resultpage import Resultpage
 import pandas as pd
 from helperclass import PandasModel
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QTableView, QFileDialog, QHeaderView
+from PyQt5.QtWidgets import QTableView, QFileDialog, QHeaderView, QInputDialog
 from PyQt5.QtCore import QObject, pyqtSlot
-from helperfunction import equalise, arrange_seat, plan_examhall
+from helperfunction import equalise, arrange_seat, plan_examhall, Grid2List
 
 
 class HomePage(Homepage):
@@ -35,6 +35,13 @@ class HomePage(Homepage):
     @pyqtSlot()
     def edit_clicked(self):
         self.switch_edit.emit()
+    
+    # @pyqtSlot()
+    # def search_clicked(self):
+    #     exam_names = list(get_exams())
+    #     exam_name, okPressed = QInputDialog.getItem(self, "Get item","Examination:", exam_names, 0, False)
+    #     if okPressed and exam_name:
+    #         print(exam_name)
         
 
 class UploadPage(Uploadpage):
@@ -90,7 +97,7 @@ class EditProfilePage(Editprofilepage):
     @pyqtSlot()
     def save_roomprofile(self):
         df = self.model.get_roomprofile()
-        df.to_excel('Res/room_profile.xlsx')
+        df.to_excel('Res/room_profile.xlsx', index = False)
 
     @pyqtSlot()
     def back_clicked(self):
@@ -120,6 +127,7 @@ class ExamDetail(Examdetails):
     def generate_clicked(self):
         # print(self.dataframes)
         # print(self.num_seat)
+        self.name_exam = self.exam_name.text()
         equalised = equalise(self.dataframes, self.num_seat)
         
         arranged = arrange_seat(equalised)
@@ -127,15 +135,13 @@ class ExamDetail(Examdetails):
         a = 0
         for hall in self.halls_info:
             b = a + hall[1] * hall[2]
-            self.planned.append([hall[0],plan_examhall(arranged[a:b], hall[1], hall[2]).reset_index()])
+            table = plan_examhall(arranged[a:b], hall[1], hall[2]).reset_index()
+            table.Row = range(1,len(table.index)+1)
+            table.set_index(['Row'])
+            if self.radio_linear.isChecked():
+                table = Grid2List(table)
+            self.planned.append([hall[0],table])
             a = b
-
-        #radio style
-        if self.radio_linear.isChecked():
-            self.style = self.radio_linear.text().replace('&','')
-        else:
-            self.style = self.radio_fill.text().replace('&','')
-        print(self.style)
 
         #Emit switch
         self.switch_result.emit()
@@ -144,13 +150,20 @@ class ResultPage(Resultpage):
 
     switch_examdetail = QtCore.pyqtSignal()
 
-    def __init__(self, df_result):
-        Resultpage.__init__(self, df_result)
+    def __init__(self, df_result, name_exam):
+        self.name_exam = name_exam
+        self.df_result = df_result
+        Resultpage.__init__(self, self.df_result)
         self.resultpage_gui()
 
     @pyqtSlot()
     def back_clicked(self):
         self.switch_examdetail.emit()
+    
+    # @pyqtSlot()
+    # def save_db(self):
+    #     print('saved',self.name_exam)
+    #     save_todb(self.name_exam, self.df_result)
 
 
 class Controller:
@@ -190,7 +203,7 @@ class Controller:
         self.examdetail.show()
 
     def show_resultpage(self):
-        self.resultpage = ResultPage(self.examdetail.planned)
+        self.resultpage = ResultPage(self.examdetail.planned, self.examdetail.name_exam)
         self.resultpage.switch_examdetail.connect(self.show_examdetail)
         self.examdetail.close()
         self.resultpage.show()
