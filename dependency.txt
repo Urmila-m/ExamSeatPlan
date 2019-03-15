@@ -1,0 +1,10 @@
+dependencies:
+lxml
+numpy
+pandas
+pyqt5
+python-dateutil
+python-docx
+pytz
+six
+xlrd
